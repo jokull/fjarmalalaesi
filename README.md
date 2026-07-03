@@ -36,21 +36,21 @@ Scripts are Python 3 stdlib-only — nothing to install.
 **Claude Code (plugin marketplace):**
 
 ```
-/plugin marketplace add jokull/icelandic-household-finances-skill
+/plugin marketplace add jokull/fjarmalalaesi
 /plugin install icelandic-home-finances@fjarmalalaesi
 ```
 
 **Any agent supporting the [Agent Skills](https://agentskills.io) standard:**
 
 ```
-npx skills add jokull/icelandic-household-finances-skill
+npx skills add jokull/fjarmalalaesi
 ```
 
 **Manual copy:**
 
 ```
-git clone https://github.com/jokull/icelandic-household-finances-skill
-cp -r icelandic-household-finances-skill/skills/icelandic-home-finances ~/.claude/skills/
+git clone https://github.com/jokull/fjarmalalaesi
+cp -r fjarmalalaesi/skills/icelandic-home-finances ~/.claude/skills/
 ```
 
 ## Try it standalone
