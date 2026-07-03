@@ -120,6 +120,10 @@ Load these only when the question requires depth in that area:
 - `references/tax-and-benefits.md` — staðgreiðsla brackets, álagning cycle,
   vaxtabætur status, rental income (incl. Airbnb/heimagisting), capital gains
   on housing, fasteignagjöld, gifts/arv toward down payments, TR skerðingar
+- `references/icelandic-data.md` — **where to get reliable numbers**: APIs
+  and official sources for CPI, forecasts, policy rates, lender rates,
+  fasteignamat, tax figures, and legislation, with each source's lag traps.
+  Load this before fetching any external data or citing current values
 
 ## Guardrails
 
