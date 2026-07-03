@@ -186,6 +186,12 @@ Load these only when the question requires depth in that area:
   and official sources for CPI, forecasts, policy rates, lender rates,
   fasteignamat, tax figures, and legislation, with each source's lag traps.
   Load this before fetching any external data or citing current values
+- `references/practical-moves.md` — verified, quantified money moves
+  (FX-cheap cards, the séreign match, unclaimed union grants, frítekjumark
+  account-splitting, fee-free prepayment windows, time-sensitive
+  deadlines). Comes with presentation rules: always relay the number, the
+  condition, and the verify-by source, and compute the value for the
+  user's own situation — never present as generic "hacks"
 - `references/glossary.md` — Icelandic ⇄ English term glossary with usage
   gotchas (gjalddagi vs eindagi, afborgun vs innborgun, ráðstöfun vs úttekt).
   Load whenever writing Icelandic or translating financial terms
