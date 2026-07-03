@@ -1,6 +1,6 @@
 ---
-name: icelandic-home-finances
-description: Model Icelandic household finance decisions — verðtryggð (CPI-indexed) mortgages, prepayment strategies, séreignarsparnaður (third-pillar pension) trade-offs, and staðgreiðsla tax stacking. Use when analyzing Icelandic mortgages, comparing verðtryggt vs óverðtryggt loans, valuing lump-sum paydowns or snowball strategies, modeling séreign-to-mortgage redirects, or any "fjármálalæsi" question about Icelandic housing finance (húsnæðislán, verðtrygging, höfuðstóll, uppgreiðsla, aukaafborganir).
+name: fjarmalalaesi
+description: Icelandic personal-finance literacy (fjármálalæsi) — payslips and wage rights, union benefits, the three-pillar pension system, verðtryggð (CPI-indexed) mortgages and prepayment strategies, séreignarsparnaður trade-offs, savings and investment options, staðgreiðsla tax stacking, and safety nets (fæðingarorlof, atvinnuleysisbætur, námslán). Use for any Icelandic personal-finance question — reading a launaseðill, negotiating salary, choosing pension funds, analyzing húsnæðislán and verðtrygging, comparing savings accounts, or navigating benefits and life events.
 license: MIT
 compatibility: Requires Python 3.10+ (stdlib only, no packages to install)
 metadata:
@@ -8,13 +8,16 @@ metadata:
 allowed-tools: Bash(python3 *)
 ---
 
-# Icelandic Home Finances (fjármálalæsi)
+# Fjármálalæsi — Icelandic Personal Finance
 
-Iceland's housing-finance system is unusual: most mortgages are **verðtryggð** —
-the principal itself is indexed to CPI monthly, so the balance *grows* in nominal
-terms even while you pay. Standard mortgage intuition (and generic amortization
-calculators) produce wrong answers here. This skill provides correct mechanics,
-validated modeling scripts, and the decision frameworks that actually matter.
+Iceland's personal-finance system is idiosyncratic: mortgage principals grow
+with CPI (verðtrygging), ~90% of workers are unionized with wage floors and
+benefit funds set by kjarasamningar, pensions come in three layers with very
+different tax and means-testing treatment, and tax on any extra income
+depends entirely on what it stacks on. Generic financial intuition — and
+generic calculators — get all of this wrong. This skill provides correct
+mechanics, validated modeling scripts, and the decision frameworks that
+actually matter.
 
 ## Core mental models (read before modeling anything)
 
@@ -69,6 +72,9 @@ a byte-identical dual-language (Python/TypeScript) implementation check.
 | `tax.py stacked` | Effective marginal rate of extra income stacked on existing income — **the** tool for séreign withdrawal modeling |
 | `paydown_vs_invest.py` | Full comparison: draw down a pot now (taxed, stacked) and pay down mortgages (passive AND snowball) vs leaving it invested until retirement (growth, stacked drawdown tax, discounted to today) |
 | `cpi.py` | Live CPI from Hagstofa's PX-Web API — `latest` gives the current VNV til verðtryggingar value and YoY inflation; use the *indexation* series (M+2 lag already applied) for loan models |
+| `payslip.py gross` | Full launaseðill from gross salary: lífeyrir, séreign, staðgreiðsla, stéttarfélagsgjald → take-home, PLUS the employer side (mótframlag, tryggingagjald → total cost, the "know your worth" number). Verified field-for-field against the payday.is calculator |
+| `payslip.py total-cost` | Inverse: employer total cost → gross → payslip (for contractor-vs-employee and salary-negotiation framing) |
+| `payslip.py verify` | Diff the local math against the live payday.is calculator across a salary list — run after each January bracket update |
 
 Typical session for "should I use savings/pension to pay down my mortgage?":
 
@@ -124,6 +130,9 @@ Load these only when the question requires depth in that area:
   and official sources for CPI, forecasts, policy rates, lender rates,
   fasteignamat, tax figures, and legislation, with each source's lag traps.
   Load this before fetching any external data or citing current values
+- `references/glossary.md` — Icelandic ⇄ English term glossary with usage
+  gotchas (gjalddagi vs eindagi, afborgun vs innborgun, ráðstöfun vs úttekt).
+  Load whenever writing Icelandic or translating financial terms
 
 ## Guardrails
 

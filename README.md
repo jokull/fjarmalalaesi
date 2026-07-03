@@ -1,33 +1,35 @@
 # fjármálalæsi
 
-Agent skills for navigating Icelandic household finances — verðtryggð
-(CPI-indexed) mortgages, séreignarsparnaður, and the tax system around them.
-Built so anyone can point an AI agent at their own numbers and get correct,
-Iceland-specific modeling instead of generic mortgage-calculator answers.
+An agent skill for Icelandic personal-finance literacy — payslips and wage
+rights, the three-pillar pension system, verðtryggð (CPI-indexed) mortgages,
+savings and investments, taxes, and safety nets. Built so anyone can point an
+AI agent at their own numbers and get correct, Iceland-specific answers
+instead of generic financial-calculator output.
 
 **Fjármálalæsi** ("financial literacy") is what Icelanders call the skill of
-understanding money. Iceland's housing finance is genuinely unusual — mortgage
-principals grow with inflation, pension redirects pay down loans tax-free, and
-tax on extra income depends entirely on what it stacks on — and generic tools
-get all of it wrong.
+understanding money. Iceland's system is genuinely idiosyncratic — mortgage
+principals grow with inflation, ~90% of workers are covered by kjarasamningar
+that set wage floors and benefit funds, pensions come in three layers with
+wildly different tax and means-testing treatment, and tax on extra income
+depends entirely on what it stacks on. Generic tools get all of it wrong.
 
-## Skills
+## What the skill covers
 
-### `icelandic-home-finances`
-
-- **Correct verðtrygging mechanics**: monthly CPI indexation of principal,
-  jafngreiðslur (annuity) recalculated on the indexed balance — the actual
-  bank formula, validated against real Arion Banki loan data
-- **Prepayment valuation**: lump sums and snowball strategies, valued as the
-  present value of avoided payments in today's kronur (never nominal sums
-  across decades)
-- **Tax stacking**: staðgreiðsla brackets applied marginally on top of
-  existing income — the number that decides séreign drawdown questions
-- **Paydown vs invest**: the full decision framework with sensitivity across
-  inflation, fund returns, horizons, and retirement income
-- **Reference docs**: verðtrygging law and mechanics, séreignarsparnaður
-  programs (including the June 2026 reinstatement of the mortgage redirect),
-  the mortgage market and its regulation, taxes and benefits
+- **Payslips & wages**: launaseðill line-by-line math, union benefits and
+  rights (kjarasamningar), salary benchmarking for negotiation
+- **Pensions**: the three pillars, séreignarsparnaður trade-offs (including
+  the tax-free mortgage redirect reinstated June 2026), fund/provider choice
+- **Housing**: correct verðtrygging mechanics validated against real bank
+  data, prepayment and snowball valuation in today's kronur, the mortgage
+  market and its regulation
+- **Taxes**: staðgreiðsla bracket stacking — the number that decides most
+  "should I take the money now or later" questions
+- **Institutions & savings**: banks vs neobanks, deposit insurance, funds,
+  government bonds, investment taxation
+- **Safety nets & life events**: fæðingarorlof, atvinnuleysisbætur, námslán,
+  barnabætur, debt help, renting
+- **Data sources**: verified APIs (Hagstofa PX-Web, Arion calculator) and
+  official sources with their lag traps documented
 
 Scripts are Python 3 stdlib-only — nothing to install.
 
@@ -37,7 +39,7 @@ Scripts are Python 3 stdlib-only — nothing to install.
 
 ```
 /plugin marketplace add jokull/fjarmalalaesi
-/plugin install icelandic-home-finances@fjarmalalaesi
+/plugin install fjarmalalaesi@fjarmalalaesi
 ```
 
 **Any agent supporting the [Agent Skills](https://agentskills.io) standard:**
@@ -50,7 +52,7 @@ npx skills add jokull/fjarmalalaesi
 
 ```
 git clone https://github.com/jokull/fjarmalalaesi
-cp -r fjarmalalaesi/skills/icelandic-home-finances ~/.claude/skills/
+cp -r fjarmalalaesi/skills/fjarmalalaesi ~/.claude/skills/
 ```
 
 ## Try it standalone
@@ -58,7 +60,7 @@ cp -r fjarmalalaesi/skills/icelandic-home-finances ~/.claude/skills/
 The scripts work without any agent:
 
 ```bash
-cd skills/icelandic-home-finances/scripts
+cd skills/fjarmalalaesi/scripts
 
 # What does a 5M prepayment on a verðtryggt loan actually buy, in today's kronur?
 python3 verdtrygging.py lumpsum --balance 76000000 --apr 4.49 --months 276 \
@@ -66,6 +68,9 @@ python3 verdtrygging.py lumpsum --balance 76000000 --apr 4.49 --months 276 \
 
 # Effective tax on a séreign withdrawal stacked on a 600k/mo pension
 python3 tax.py stacked --withdrawal 480000 --other-income 600000
+
+# Live CPI and the current verðtrygging index from Hagstofa
+python3 cpi.py latest
 
 # The whole paydown-vs-invest decision in one command
 python3 paydown_vs_invest.py --loans 76000000:4.49:276,8800000:5.99:276 \
@@ -75,10 +80,11 @@ python3 paydown_vs_invest.py --loans 76000000:4.49:276,8800000:5.99:276 \
 
 ## Caveats
 
-Decision-support modeling, not financial advice. Tax brackets and program
-rules are point-in-time (2026) — the scripts and references say where to
-verify current values (skatturinn.is, sedlabanki.is, hms.is). Verify big
-moves with your bank or a licensed advisor.
+Decision-support modeling, not financial advice. Tax brackets, benefit
+amounts, and program rules are point-in-time (2026) — the scripts and
+references say where to verify current values (skatturinn.is, sedlabanki.is,
+hms.is, island.is). Verify big moves with your bank, union, or a licensed
+advisor.
 
 ## License
 
