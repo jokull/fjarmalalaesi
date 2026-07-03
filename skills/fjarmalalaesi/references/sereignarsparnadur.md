@@ -93,11 +93,14 @@ fjármálaráðherra Daði Már Kristófersson).
 
 - Séreign drawdown is wage-taxed (stack it on other retirement income to get
   the true rate — see `scripts/tax.py stacked`).
-- **Séreign withdrawals are fully exempt from TR ellilífeyrir means-testing**
-  (since 2017; disability benefits differ). Skyldulífeyrir, wages, and
-  capital income are clawed back at **45%** above the frítekjumark
-  (43,658/mo almennt, 2026); séreign is the only retirement asset with a 0%
-  TR clawback.
+- **Frjáls séreign withdrawals are fully exempt from TR ellilífeyrir
+  means-testing** (since 2017; disability benefits differ). Skyldulífeyrir,
+  wages, and capital income are clawed back at **45%** above the frítekjumark
+  (43,658/mo almennt, 2026); frjáls séreign is the only retirement asset
+  with a 0% TR clawback. **Caution: tilgreind séreign (the 3.5% carved from
+  the mandatory 15.5%) DOES count against TR since Jan 2023** — see
+  `pension-system.md`. "Séreign" without a qualifier is ambiguous; the
+  exemption covers the 2–4%+2% viðbót only.
 - Consequence for paydown-vs-keep models: liquidating séreign early to hold
   taxable savings instead is doubly penalized later (22% fjármagnstekjuskattur
   on returns + 45% TR clawback on that capital income), while redirecting to

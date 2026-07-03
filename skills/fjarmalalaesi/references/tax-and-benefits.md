@@ -130,16 +130,19 @@ What counts against TR:
 | Lífeyrissjóður (occupational pension) drawdown | **Yes, in full** — the dominant clawback driver |
 | Employment income | Yes, but with the extra 210,400/mo frítekjumark |
 | Capital income (interest, dividends, **rent**, gains) | Yes, in full; **always split 50/50 between spouses** |
-| **Séreignarsparnaður withdrawals** | **NO — exempt since 2017** |
+| **Frjáls séreignarsparnaður withdrawals** (the 2–4%+2% viðbót) | **NO — exempt since 2017** |
+| Tilgreind séreign withdrawals (the 3.5% from the mandatory 15.5%) | **Yes, since Jan 2023** — see `pension-system.md` |
 
-**The modeling consequence**: séreign is TR-clawback-free retirement income,
-while each extra króna of occupational pension or capital income above
-~44k/mo destroys 0.45 kr of TR benefit *on top of* income tax. Combined
-marginal wedges on occupational pension can reach ~65–70%. This makes
-séreignarsparnaður structurally the best-treated retirement asset in the
-system — a strong argument *against* liquidating it early, and it also means
-long-term rental income (taxed 16.5%) still loses 45% to TR clawback for
-pensioners. Model each income stream's TR interaction separately.
+**The modeling consequence**: frjáls séreign is TR-clawback-free retirement
+income, while each extra króna of occupational pension or capital income
+above ~44k/mo destroys 0.45 kr of TR benefit *on top of* income tax.
+Combined marginal wedges on occupational pension can reach ~65–70%. This
+makes frjáls séreignarsparnaður structurally the best-treated retirement
+asset in the system — a strong argument *against* liquidating it early, and
+it also means long-term rental income (taxed 16.5%) still loses 45% to TR
+clawback for pensioners. Model each income stream's TR interaction
+separately, and always ask whether a "séreign" balance is frjáls or
+tilgreind — their TR treatment differs.
 
 ## Sources
 
