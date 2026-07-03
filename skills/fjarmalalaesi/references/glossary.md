@@ -154,7 +154,7 @@ equivalent and translating them loses precision.
 | umsýsluþóknun | management fee | |
 | ávöxtun / ávöxtunarleið | return / investment strategy option | |
 | Kauphöllin | the stock exchange (Nasdaq Iceland) | |
-| Tryggingarsjóður innstæðueigenda (TIF) | deposit guarantee fund | |
+| Tryggingarsjóður vegna fjármálafyrirtækja (TVF, formerly TIF) | deposit guarantee fund | renamed by lög 48/2022; tvf.is |
 | Seðlabanki Íslands (SÍ) | Central Bank | |
 | meginvextir / stýrivextir | policy rate | meginvextir is the official term; stýrivextir colloquial |
 | vísitala neysluverðs (VNV) | consumer price index (CPI) | |

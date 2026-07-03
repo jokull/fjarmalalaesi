@@ -90,8 +90,9 @@ most for them.
 ## 4. Menntasjóður námsmanna (lög 60/2020, reformed Apr 2026)
 
 - Borrowable 2026–27: grunnframfærsla **178,442/mo** + húsnæði **120,311**
-  ≈ 299k/mo (single, renting). Frítekjumark 2,600,000/yr, 45% reduction
-  above.
+  ≈ 299k/mo (single, renting; per úthlutunarreglur nr. 312/2026 — the
+  school-year-2025–26 figures were never primary-verified, use these).
+  Frítekjumark 2,600,000/yr, 45% reduction above.
 - Interest-free until námslok; then choose verðtryggt (**cap 4%**) or
   óverðtryggt (**cap 9%**); rate = 3-yr avg of ~5-yr ríkisbréf yield +
   0.8%. Caps have been binding in recent years.
@@ -108,9 +109,11 @@ most for them.
 ## 5. Child benefits & childcare (Reykjavík)
 
 - **Barnabætur 2026**: 345,000/child/yr (couples; 514,500 single parents)
-  + 130,000 under-7 supplement. Phase-out **flat 4% per child** above
-  11,688,000 (couples) / 5,844,000 (single). Paid **4×/year** (Feb/May
-  advance, Jun/Oct final), automatic, no application.
+  + 130,000 under-7 supplement. Phase-out ~4% per child above 11,688,000
+  (couples) / 5,844,000 (single) — verify the exact schedule at
+  skatturinn.is/barnabaetur before computing (post-2024 simplified system).
+  Paid **4×/year** (Feb/May advance, Jun/Oct final), automatic, no
+  application.
 - **Meðlag 2026: 50,634/mo per child** (legal minimum, = TR barnalífeyrir).
   Collection now under Sýslumaðurinn á Norðurlandi vestra (Innheimtustofnun
   abolished 2024); TR pays recipients up front. Non-payment → wage
@@ -158,7 +161,8 @@ most for them.
   from skiptalok — a genuine fresh start; sometimes faster than 3-year
   greiðsluaðlögun when there's no home to save.
 - Consumer-loan cost cap: ÁHK ≤ 35% + policy rate (~43% mid-2026); the
-  smálán loophole era is over. Dráttarvextir Jul 2026: **15.5%**.
+  smálán loophole era is over. Dráttarvextir Jul 2026: **15.5%** (per SÍ
+  notice 06/2026 — SÍ publishes monthly, don't compute from meginvextir).
   Collection-fee caps per reglugerð 37/2009 — %-of-debt fees prohibited.
 
 ## 8. Renting (húsaleigulög 36/1994 as amended 2024–2026)

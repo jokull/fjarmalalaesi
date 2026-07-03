@@ -18,11 +18,14 @@ CPI ~5.2%, next MPC decision Aug 19 2026.
 ## 1. Lender landscape
 
 **Commercial banks** (~68% of mortgage stock, falling):
-- **Arion**: óverðtryggt breytilegir/föst 3 ár up to 40 yr; verðtryggt föst
-  3 ár í senn up to 25–30 yr; blandað lán. 80% LTV purchase (85% FTB);
-  70–80% refi split into grunnlán + viðbótarlán (+~0.7pp). Public
-  calculator API (no auth): `POST apps.arionbanki.is/einstaklinglan/api/loancalculation/calculate`.
-- **Íslandsbanki**: verðtryggt föst 5 ár í senn max 30 yr; refi capped at
+- **Arion**: óverðtryggt breytilegir/föst 3 ár up to 40 yr; verðtryggt up
+  to 25–30 yr (sources disagree whether currently breytilegir or föst 3 ár
+  í senn — verify on arionbanki.is or its calculator API before citing);
+  blandað lán. 80% LTV purchase (85% FTB); 70–80% refi split into grunnlán
+  + viðbótarlán (+~0.7pp). Public calculator API (no auth):
+  `POST apps.arionbanki.is/einstaklinglan/api/loancalculation/calculate`.
+- **Íslandsbanki**: verðtryggt föst 5 ár í senn max 30 yr (Oct 2025 info —
+  new verðtryggð lending was paused then, verify); refi capped at
   **70% LTV**; FTB viðbótarlán to 90%.
 - **Landsbankinn**: óverðtryggt breytilegir = **meginvextir + 2.50% fixed
   spread** (post-vaxtadómur repricing); verðtryggt restricted to first-time

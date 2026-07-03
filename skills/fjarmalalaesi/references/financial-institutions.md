@@ -125,8 +125,10 @@ Rate **22%** on capital income. Key mechanics:
 ## 7. Expensive-credit traps & protection
 
 - **Current unsecured rates**: overdraft ~15.5% at all three banks;
-  credit-card revolving ~15.5%; dráttarvextir 15.5% (statutory: key rate
-  + 8pp).
+  credit-card revolving ~15.5%; dráttarvextir **15.5% per SÍ notice
+  06/2026** — SÍ publishes the figure monthly (statutory formula adds a
+  fixed vanefndaálag to a reference rate that is NOT simply meginvextir;
+  cite the notice, don't compute it).
 - **BNPL true costs**: Pei 60-day ≈ 4.95% + fees ≈ 40%+ annualized;
   Netgíró/Síminn Pay/Aur dreifing 17–18% + 3.5–6% upfront + ~400–550 kr
   per payment. Fee stacking pushes small balances to the legal ceiling.

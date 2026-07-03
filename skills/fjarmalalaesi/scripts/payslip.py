@@ -22,9 +22,9 @@ Rounding: half-up per line item (matches payday.is).
 Stdlib only. Reuses the bracket table from tax.py (same directory).
 
 CLI:
-    python3 payslip.py gross 1000000 --union 1.0 --extra-pension 4
-    python3 payslip.py total-cost 1208073 --union 1.0 --extra-pension 4
-    python3 payslip.py verify --salaries 400000,1000000,2500000 --union 1.0
+    python3 payslip.py gross 1000000 --union 0.7 --extra-pension 4
+    python3 payslip.py total-cost 1208073 --union 0.7 --extra-pension 4
+    python3 payslip.py verify --salaries 400000,1000000,2500000 --union 0.7
 """
 
 from __future__ import annotations
@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import urllib.error
 import urllib.request
 
 from tax import BRACKETS, PERSONAL_CREDIT_MONTHLY, TAX_YEAR
@@ -199,8 +200,9 @@ def cmd_gross(args: argparse.Namespace) -> None:
                 extra_pension_employee_pct=args.extra_pension,
                 extra_pension_employer_pct=args.extra_pension_employer,
                 allowance_pct=args.allowance)
-    print(json.dumps(d, indent=2) if args.json else "", end="")
-    if not args.json:
+    if args.json:
+        print(json.dumps(d, indent=2))
+    else:
         _print_summary(d)
 
 
@@ -227,23 +229,27 @@ def cmd_verify(args: argparse.Namespace) -> None:
         "pensionContributionEmployerAmount", "additionalPensionContributionEmployerAmount",
         "rehabilitationFundAmount", "insuranceFeeAmount",
     ]
-    worst = 0
+    failed = False
     for gross in salaries:
         local = compute(gross, union_pct=args.union,
                         extra_pension_employee_pct=args.extra_pension,
                         extra_pension_employer_pct=args.extra_pension_employer,
                         allowance_pct=args.allowance)
-        remote = payday_call(gross, union_pct=args.union,
-                             extra_pension_employee_pct=args.extra_pension,
-                             extra_pension_employer_pct=args.extra_pension_employer,
-                             allowance_pct=args.allowance)
-        diffs = {f: (local[f], remote[f]) for f in fields if local[f] != remote.get(f)}
-        worst = max(worst, max((abs(a - b) for a, b in diffs.values()), default=0))
+        try:
+            remote = payday_call(gross, union_pct=args.union,
+                                 extra_pension_employee_pct=args.extra_pension,
+                                 extra_pension_employer_pct=args.extra_pension_employer,
+                                 allowance_pct=args.allowance)
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            raise SystemExit(f"payday.is unreachable or changed ({e}) — verify manually at payday.is")
+        # remote.get(f) is None when payday.is renames a field — that IS a finding
+        diffs = {f: (local[f], remote.get(f)) for f in fields if local[f] != remote.get(f)}
         status = "OK — all fields match" if not diffs else f"MISMATCH: {diffs}"
+        failed = failed or bool(diffs)
         print(f"gross {gross:>12,}: take-home local {local['payoutAmountSalary']:,} "
-              f"vs payday {remote['payoutAmountSalary']:,} → {status}")
-    if worst:
-        raise SystemExit(f"Max field deviation: {worst} kr.")
+              f"vs payday {remote.get('payoutAmountSalary', 0):,} → {status}")
+    if failed:
+        raise SystemExit("Verification FAILED — update the constants (or investigate a payday.is schema change).")
     print("\nAll salaries verified against payday.is ✓")
 
 
@@ -252,7 +258,9 @@ def main() -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def common(sp: argparse.ArgumentParser) -> None:
-        sp.add_argument("--union", type=float, default=0.0, help="stéttarfélagsgjald %% of gross (e.g. VR 0.7, Efling 1.0)")
+        sp.add_argument("--union", type=float, default=0.0,
+                        help="stéttarfélagsgjald %% of gross (VR 0.7, Efling 0.7 — most unions 0.7–1.0; "
+                             "the '1%% Efling' figure is the employer's sjúkrasjóður premium, not dues)")
         sp.add_argument("--extra-pension", type=float, default=0.0, help="séreign employee %% (0, 2 or 4)")
         sp.add_argument("--extra-pension-employer", type=float, default=0.0, help="séreign employer match %% (usually 2 when employee ≥2)")
         sp.add_argument("--allowance", type=float, default=100.0, help="persónuafsláttur utilization %% (0–200 with spouse transfer)")

@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import urllib.error
 import urllib.request
 
 BASE = "https://px.hagstofa.is/pxis/api/v1/is/Samfelag/launogtekjur/1_laun/1_laun"
@@ -53,20 +54,44 @@ PERCENTILE_CODES = {"P10": "1", "P25": "3", "P50": "6", "P75": "9", "P90": "11"}
 MEDIAN_CODE = "2"  # miðgildi in VIN02002
 
 
+def _fetch(req: urllib.request.Request) -> dict:
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.loads(resp.read().decode("utf-8-sig"))
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+        raise SystemExit(
+            f"Hagstofa PX-Web unreachable or changed ({e}) — see "
+            f"references/icelandic-data.md, or browse the launarannsókn tables "
+            f"at hagstofa.is manually."
+        )
+
+
 def _query(table: str, query: list[dict]) -> dict:
     body = json.dumps({"query": query, "response": {"format": "json"}}).encode()
-    req = urllib.request.Request(
+    return _fetch(urllib.request.Request(
         f"{BASE}/{table}", data=body,
         headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8-sig"))
+    ))
 
 
 def _metadata(table: str) -> dict:
-    req = urllib.request.Request(f"{BASE}/{table}")
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8-sig"))
+    return _fetch(urllib.request.Request(f"{BASE}/{table}"))
+
+
+def _assert_schema(table: str, var_code: str, value_code: str, expected_text_prefix: str) -> None:
+    """Fail loudly (not wrongly) if Hagstofa renumbers a value code we hardcode."""
+    meta = _metadata(table)
+    for var in meta["variables"]:
+        if var["code"] == var_code:
+            mapping = dict(zip(var["values"], var["valueTexts"]))
+            text = mapping.get(value_code, "")
+            if not text.startswith(expected_text_prefix):
+                raise SystemExit(
+                    f"{table} schema changed: {var_code} code {value_code!r} is now "
+                    f"{text!r}, expected prefix {expected_text_prefix!r} — update wages.py mappings."
+                )
+            return
+    raise SystemExit(f"{table} schema changed: variable {var_code!r} missing — update wages.py.")
 
 
 def latest_year(table: str) -> str:
@@ -78,6 +103,7 @@ def latest_year(table: str) -> str:
 
 
 def cmd_groups(args: argparse.Namespace) -> None:
+    _assert_schema("VIN02002.px", "Eining", MEDIAN_CODE, "Miðgildi")
     year = args.year or latest_year("VIN02002.px")
     data = _query("VIN02002.px", [
         {"code": "Ár", "selection": {"filter": "item", "values": [year]}},
@@ -103,6 +129,7 @@ def cmd_groups(args: argparse.Namespace) -> None:
 
 
 def cmd_percentiles(args: argparse.Namespace) -> None:
+    _assert_schema("VIN02004.px", "Eining", PERCENTILE_CODES["P50"], "50%")
     year = args.year or latest_year("VIN02004.px")
     data = _query("VIN02004.px", [
         {"code": "Ár", "selection": {"filter": "item", "values": [year]}},

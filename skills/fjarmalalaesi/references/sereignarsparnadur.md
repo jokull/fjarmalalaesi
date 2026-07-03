@@ -77,8 +77,11 @@ fjármálaráðherra Daði Már Kristófersson).
 ## 5. Modeling quantities
 
 - **Tax advantage of the redirect** = the marginal tax otherwise due at
-  drawdown: ≥31.49%, typically 31.49–37.99% for retirees. Redirected kronur
-  land at 100%; withdrawn kronur land at 53.7–68.5%.
+  drawdown: **0–46.29% depending on what the withdrawal stacks on** —
+  compute it with `scripts/tax.py stacked`, never assume a floor. With a
+  full career pension underneath it's typically 31.49–37.99%; with little
+  other income and a long drawdown, persónuafsláttur can push the
+  effective rate below 20%. Redirected kronur land at 100%.
 - **To hit the 500k/yr cap** requires gross wages ≥ ~694k/mo (500k = 6% of
   8.33M/yr); below that, redirect = 6% of gross.
 - Amounts above the cap (employer >2%, contributions >4%, or 6% of higher

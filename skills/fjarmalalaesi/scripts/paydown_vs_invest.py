@@ -86,23 +86,33 @@ def invested_pv(
 ) -> dict:
     """Today's-money value of leaving the pot invested until retirement.
 
-    Grows at nominal fund return, withdrawn over `drawdown_years` in equal
-    monthly amounts stacked on `retirement_other_income`, taxed at the
-    brackets actually reached, discounted at inflation back to today.
-    (Simplification: taxes the whole pot at the effective rate of the monthly
-    withdrawal at horizon; growth during drawdown is ignored — conservative.)
+    Tax brackets and persónuafsláttur are CPI-indexed by law (66.–67. gr.
+    laga 90/2003), so the bracket math is done in TODAY'S kronur: the
+    nominal pot at horizon is deflated by inflation, spread over the
+    drawdown months, and the stacked rate computed with today's brackets
+    against `retirement_other_income` (which must also be in today's
+    kronur). Taxing nominal future withdrawals against today's brackets
+    would badly overstate the tax over long horizons.
+
+    Remaining simplifications, with bias directions: growth during the
+    drawdown period is ignored (understates this option); the whole pot is
+    valued at the horizon rather than discounting each withdrawal month
+    separately (overstates it). Net direction unknown — treat the result
+    as a central estimate, not a bound. TR skerðing (45% clawback above
+    the frítekjumark) is NOT modeled — frjáls séreign is exempt, but if
+    the pot is anything else, apply tax.py tr-clawback to the drawdown.
     """
     gross_at_horizon = pot_gross * (1.0 + fund_return_pct / 100.0) ** horizon_years
-    monthly_withdrawal = gross_at_horizon / (drawdown_years * 12.0)
-    eff_rate = stacked_effective_rate(monthly_withdrawal, retirement_other_income)
-    net = gross_at_horizon * (1.0 - eff_rate)
-    pv = net / (1.0 + inflation / 100.0) ** horizon_years
+    real_at_horizon = gross_at_horizon / (1.0 + inflation / 100.0) ** horizon_years
+    monthly_withdrawal_todays_kr = real_at_horizon / (drawdown_years * 12.0)
+    eff_rate = stacked_effective_rate(monthly_withdrawal_todays_kr, retirement_other_income)
+    net_real = real_at_horizon * (1.0 - eff_rate)
     return {
         "gross_at_horizon": gross_at_horizon,
-        "monthly_withdrawal": monthly_withdrawal,
+        "real_at_horizon_todays_kr": real_at_horizon,
+        "monthly_withdrawal_todays_kr": monthly_withdrawal_todays_kr,
         "effective_tax_rate": eff_rate,
-        "net_at_horizon": net,
-        "pv_today": pv,
+        "pv_today": net_real,
     }
 
 
@@ -157,9 +167,10 @@ def main() -> None:
     print(f"A1 Passive paydown PV:   {f(passive_pv)}  (today's kronur)")
     print(f"A2 Snowball paydown PV:  {f(snowball_pv)}  — payoff {payoff_months} mo vs {baseline_months} baseline")
     print(f"B  Invest until retirement:")
-    print(f"     grows to {f(invest['gross_at_horizon'])} in {args.horizon_years:.0f}y at {args.fund_return}%")
-    print(f"     drawn {f(invest['monthly_withdrawal'])}/mo over {args.drawdown_years:.0f}y on top of "
-          f"{f(args.retirement_other_income)}/mo → eff. tax {invest['effective_tax_rate']:.1%}")
+    print(f"     grows to {f(invest['gross_at_horizon'])} nominal in {args.horizon_years:.0f}y at {args.fund_return}% "
+          f"= {f(invest['real_at_horizon_todays_kr'])} in today's kronur")
+    print(f"     drawn {f(invest['monthly_withdrawal_todays_kr'])}/mo (today's kr) over {args.drawdown_years:.0f}y on top of "
+          f"{f(args.retirement_other_income)}/mo → eff. tax {invest['effective_tax_rate']:.1%} (CPI-indexed brackets)")
     print(f"     PV today: {f(invest['pv_today'])}")
     print()
     print(f"Verdict vs passive paydown:  {out['verdict_vs_passive']} "

@@ -10,7 +10,8 @@ retirement years stacks on (usually much lower) pension income instead.
 
 Bracket values are for 2026 and must be updated annually from
 https://www.skatturinn.is/einstaklingar/stadgreidsla/skattthrep/
-(pass --year to fail loudly if the table here is stale).
+(a stderr warning fires automatically when the system year differs from
+the table year; pass --year to make staleness a hard error).
 
 Stdlib only. Amounts in ISK.
 
@@ -23,12 +24,17 @@ CLI examples:
 
     # Effective rate on a huge single-month lump on top of salary
     python3 tax.py stacked --withdrawal 30000000 --other-income 1606000
+
+    # TR ellilífeyrir clawback caused by extra retirement income
+    python3 tax.py tr-clawback --income 400000
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
+import sys
 
 # 2026 staðgreiðsla — update annually from skatturinn.is
 TAX_YEAR = 2026
@@ -39,6 +45,12 @@ BRACKETS: list[tuple[float, float]] = [
     (float("inf"), 0.4629),
 ]
 PERSONAL_CREDIT_MONTHLY = 72_492  # persónuafsláttur per month (869,898/yr)
+
+# TR ellilífeyrir means-testing, 2026 (island.is/TR) — update annually.
+# NOTE: frjáls séreign withdrawals are EXEMPT from this clawback;
+# skyldulífeyrir, tilgreind séreign, wages and capital income are not.
+TR_FRITEKJUMARK_MONTHLY = 43_658   # almennt frítekjumark
+TR_CLAWBACK_RATE = 0.45
 
 
 def monthly_tax(gross_monthly: float, *, credit: float = PERSONAL_CREDIT_MONTHLY) -> float:
@@ -75,14 +87,32 @@ def net_of_stacked_tax(extra_monthly: float, other_monthly_income: float) -> flo
     return extra_monthly * (1.0 - stacked_effective_rate(extra_monthly, other_monthly_income))
 
 
+def tr_clawback(countable_monthly_income: float) -> float:
+    """Monthly TR ellilífeyrir reduction caused by countable income.
+
+    Countable: skyldulífeyrir, tilgreind séreign, wages (above their own
+    extra frítekjumark), capital income. NOT countable: frjáls séreign
+    withdrawals. Reduction is capped by the benefit itself in reality —
+    this returns the raw 45%-above-frítekjumark figure.
+    """
+    return TR_CLAWBACK_RATE * max(0.0, countable_monthly_income - TR_FRITEKJUMARK_MONTHLY)
+
+
 # ── CLI ──────────────────────────────────────────────────────────────────
 
 
 def _check_year(args: argparse.Namespace) -> None:
-    if args.year and args.year != TAX_YEAR:
+    if getattr(args, "year", None) and args.year != TAX_YEAR:
         raise SystemExit(
             f"Bracket table in this script is for {TAX_YEAR}, you asked for {args.year}. "
             f"Update BRACKETS/PERSONAL_CREDIT_MONTHLY from skatturinn.is first."
+        )
+    if datetime.date.today().year != TAX_YEAR:
+        print(
+            f"WARNING: bracket table is for {TAX_YEAR} but the current year is "
+            f"{datetime.date.today().year} — update from skatturinn.is/einstaklingar/"
+            f"helstutolur/ and rerun payslip.py verify.",
+            file=sys.stderr,
         )
 
 
@@ -120,6 +150,26 @@ def cmd_stacked(args: argparse.Namespace) -> None:
         print(f"  effective rate {rate:.1%} → net {out['net_withdrawal']:,}/mo [{TAX_YEAR}]")
 
 
+def cmd_tr_clawback(args: argparse.Namespace) -> None:
+    _check_year(args)
+    reduction = tr_clawback(args.income)
+    out = {
+        "countable_income_monthly": args.income,
+        "fritekjumark_monthly": TR_FRITEKJUMARK_MONTHLY,
+        "clawback_rate": TR_CLAWBACK_RATE,
+        "tr_reduction_monthly": round(reduction),
+        "note": "raw 45%-above-frítekjumark figure; actual reduction is capped by the "
+                "TR benefit itself. Frjáls séreign withdrawals are exempt entirely.",
+        "tax_year": TAX_YEAR,
+    }
+    if args.json:
+        print(json.dumps(out, indent=2, ensure_ascii=False))
+    else:
+        print(f"Countable income {args.income:,.0f}/mo → TR ellilífeyrir reduced by "
+              f"{reduction:,.0f}/mo (45% above {TR_FRITEKJUMARK_MONTHLY:,} frítekjumark) [{TAX_YEAR}]")
+        print("Frjáls séreign withdrawals are exempt; skyldulífeyrir/tilgreind/capital income are not.")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -136,6 +186,12 @@ def main() -> None:
     sp.add_argument("--year", type=int, help="assert bracket table year matches")
     sp.add_argument("--json", action="store_true")
     sp.set_defaults(func=cmd_stacked)
+
+    sp = sub.add_parser("tr-clawback", help="TR ellilífeyrir reduction caused by countable retirement income")
+    sp.add_argument("--income", type=float, required=True,
+                    help="countable monthly income ISK (skyldulífeyrir, tilgreind séreign, capital income — NOT frjáls séreign)")
+    sp.add_argument("--json", action="store_true")
+    sp.set_defaults(func=cmd_tr_clawback)
 
     args = p.parse_args()
     args.func(args)

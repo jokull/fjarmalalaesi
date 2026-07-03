@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Python 3.10+ (stdlib only, no packages to install)
 metadata:
   author: jokull
-allowed-tools: Bash(python3 *)
+allowed-tools: Bash(python3:*)
 ---
 
 # Fjármálalæsi — Icelandic Personal Finance
@@ -60,9 +60,10 @@ actually matter.
    lífeyrir 4% and séreign (pre-tax) → staðgreiðsla → stéttarfélagsgjald
    (post-tax). The **2% séreign employer match is a 100% instant return**
    on the matched money — always ask whether it's being captured. The
-   employer's true cost is ~122% of gross (mótframlag, tryggingagjald,
-   sjóðir) — that's the "know your worth" number for negotiation and
-   contractor comparisons (`scripts/payslip.py`).
+   employer's true cost is ~120.8% of gross from `scripts/payslip.py`
+   (pension + tryggingagjald + VIRK), ~122.4% including the union sjóðir
+   (see `unions-and-wages.md` §2) — the "know your worth" number for
+   negotiation and contractor comparisons.
 
 7. **Kjarasamningar set floors for everyone** (lög 55/1980 — member or
    not), so wage tables are floors, never benchmarks. Benchmark against
@@ -85,8 +86,9 @@ actually matter.
 
 All scripts are Python 3 stdlib-only, in `scripts/`. Each has `--help` and
 `--json` for machine-readable output. Run them; don't re-derive the math by
-hand — the formulas here are validated against real Arion Banki loan data and
-a byte-identical dual-language (Python/TypeScript) implementation check.
+hand — the mortgage formulas were validated against real Arion Banki loan
+data during development, and the payslip math verifies live against
+payday.is (`payslip.py verify`).
 
 | Script | Purpose |
 |---|---|
@@ -121,8 +123,15 @@ python3 scripts/paydown_vs_invest.py \
 
 Interview the user for: loan balances/APRs/remaining months (from their bank's
 netbanki), gross monthly salary, years to retirement, expected pension income
-(TR + lífeyrissjóður — island.is or the fund's estimator), and current
+(TR + lífeyrissjóður — Lífeyrisgáttin or the fund's estimator), and current
 inflation forecast (see below).
+
+Two modeling notes: (1) **óverðtryggt loans** are the same engine with
+`--inflation 0` and the nominal rate — use that for verðtryggt-vs-óverðtryggt
+payment-path comparisons; (2) **TR skerðing is not inside
+`paydown_vs_invest.py`** — frjáls séreign is exempt, but for any other
+retirement income stream apply `tax.py tr-clawback` on top (45% above the
+frítekjumark; see `tax-and-benefits.md` §9).
 
 ## Inflation assumptions
 

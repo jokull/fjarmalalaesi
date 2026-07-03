@@ -97,7 +97,7 @@ balance −= (payment − interest)
 ## 5. Restrictions on verðtryggð loans (2021–2025)
 
 - **Seðlabanki LTV rules**: general cap **80%**, first-time buyers **90%**
-  (FSN 31 Oct 2025; was 85/85 since 2022).
+  (FSN 31 Oct 2025).
 - **DSTI rules (nr. 1130/2025 + 1300/2025)**: greiðslubyrði ≤ **35%** of
   ráðstöfunartekjur (**40%** first-time buyers). Test assumptions: verðtryggð
   loans stress-tested at **≥3% real rate and max 25-year amortization**;
@@ -105,10 +105,13 @@ balance −= (payment − interest)
   Lenders may exceed for 10% of quarterly volume.
 - **Product restrictions (autumn 2024–2025)**: Landsbankinn — verðtryggð
   loans first-time-buyers-only, max 20 years, fixed only. Íslandsbanki —
-  fixed 5-yr resets, max 30 years. Arion — still offers verðtryggð
-  breytilegir, max 25 years. **40-year verðtryggð annuities effectively
-  survive only for first-time buyers, mostly at pension funds** (e.g. LV up
-  to 40 yr FTB at ≤70% LTV).
+  fixed 5-yr resets, max 30 years (Oct 2025 info; new verðtryggð fixed
+  lending was paused then — verify whether resumed). Arion — offers
+  verðtryggð at max 25–30 years; sources disagree whether currently
+  breytilegir or föst 3 ár í senn — check arionbanki.is/its calculator API
+  before citing. **40-year verðtryggð annuities effectively survive only
+  for first-time buyers, mostly at pension funds** (e.g. LV up to 40 yr
+  FTB at ≤70% LTV).
 - **Vaxtamálið (2025 Supreme Court)**: Íslandsbanki's variable-rate terms
   ruled unlawful (Oct 14, 2025 — discretion too open-ended); Arion acquitted
   (Dec 10, 2025); Landsbankinn cases concluded Dec 2025. Aftermath: variable
@@ -134,11 +137,12 @@ balance −= (payment − interest)
 
 ## 7. Rate environment (July 2026 — verify before relying)
 
-- Meginvextir SÍ **7.75%** (raised Mar 2026, held May); CPI **5.2%** YoY;
-  PM 2026/2 sees inflation declining toward target by ~2028.
-- New verðtryggð mortgages: banks 4.6–4.9% real; pension funds 4.3–4.4%
-  (LV 4.40%, Gildi 4.30%) at ≤70% LTV.
-- New óverðtryggð: 9.0–10.9% variable, 8.3–9.7% fixed.
+- Meginvextir SÍ **7.75%** (two +0.25pp hikes in 2026, March and May);
+  CPI **5.2%** YoY; PM 2026/2 sees inflation declining toward target ~2028.
+- Rates: **defer to `mortgage-market.md` §2 for the current snapshot** —
+  roughly banks 4.35–5.0% real verðtryggt, pension funds 3.3–4.5%
+  (Birta breytilegir at the floor), óverðtryggð 8.9–10.9% variable /
+  8.3–9.7% fixed.
 - Pension funds undercut banks by ~0.5–1pp on verðtryggð but cap LTV ~70%;
   bank share of mortgage stock 68.2% end-2025, pension funds 27.3% rising.
 - Machine-readable rate source: Arion's public calculator API

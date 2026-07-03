@@ -171,11 +171,11 @@ class LoanSpec:
         return cls(float(parts[0]), float(parts[1]), int(parts[2]))
 
 
-def combined_baseline(loans: list[LoanSpec], inflation_pct: float) -> list[float]:
+def combined_baseline(loans: list[LoanSpec], inflation_pct: float, method: str = "annuity") -> list[float]:
     """Per-month combined required payment if nothing extra is ever paid."""
     streams = [
         [row.payment for row in simulate_loan(
-            l.balance, l.apr_pct, l.months_remaining, inflation_pct, fee=l.fee
+            l.balance, l.apr_pct, l.months_remaining, inflation_pct, fee=l.fee, method=method
         ).rows]
         for l in loans
     ]
@@ -199,7 +199,7 @@ def simulate_snowball(
     plus totals. This is the disciplined-paydown model — the realistic upper
     bound on what a prepayment can achieve.
     """
-    baseline = combined_baseline(loans, inflation_pct)
+    baseline = combined_baseline(loans, inflation_pct, method)
 
     # Apply lump greedily by APR descending
     remaining_lump = lump_sum
@@ -345,7 +345,7 @@ def cmd_lumpsum(args: argparse.Namespace) -> None:
 
 def cmd_snowball(args: argparse.Namespace) -> None:
     loans = [LoanSpec.parse(s) for s in args.loans.split(",")]
-    res = simulate_snowball(loans, args.inflation, lump_sum=args.lump)
+    res = simulate_snowball(loans, args.inflation, lump_sum=args.lump, method=args.method)
     pv = pv_of_stream_difference(res["baseline_stream"], res["snowball_stream"], args.inflation)
     out = {
         "lump_sum": args.lump,
@@ -398,6 +398,8 @@ def main() -> None:
     common(sp, single_loan=False)
     sp.add_argument("--loans", required=True, help="comma-separated balance:apr:months, e.g. 76000000:4.49:276,8800000:5.99:276")
     sp.add_argument("--lump", type=float, default=0.0, help="one-time prepayment before month 1")
+    sp.add_argument("--method", choices=["annuity", "equal_principal"], default="annuity",
+                    help="applies to ALL loans: jafngreiðslur (default) or jafnar afborganir")
     sp.set_defaults(func=cmd_snowball)
 
     args = p.parse_args()

@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import urllib.error
 import urllib.request
 
 BASE = "https://px.hagstofa.is/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv"
@@ -34,9 +35,16 @@ def _query(table: str, query: list[dict]) -> list[dict]:
         data=body,
         headers={"Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        # PX-Web returns JSON with a BOM sometimes; be tolerant
-        return json.loads(resp.read().decode("utf-8-sig"))["data"]
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            # PX-Web returns JSON with a BOM sometimes; be tolerant
+            return json.loads(resp.read().decode("utf-8-sig"))["data"]
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as e:
+        raise SystemExit(
+            f"Hagstofa PX-Web unreachable or schema changed ({e}) — see "
+            f"references/icelandic-data.md for endpoint details, or read the "
+            f"latest CPI release at hagstofa.is manually."
+        )
 
 
 def fetch_indexation(n: int = 24) -> list[dict]:
@@ -77,6 +85,8 @@ def fetch_headline(n: int = 12) -> list[dict]:
 def cmd_latest(args: argparse.Namespace) -> None:
     idx = fetch_indexation(3)
     head = [m for m in fetch_headline(3) if "yoy_inflation_pct" in m]
+    if not idx or not head:
+        raise SystemExit("Hagstofa returned no usable data for the latest months — check the tables manually.")
     latest_idx = idx[-1]
     latest_head = head[-1]
     out = {
