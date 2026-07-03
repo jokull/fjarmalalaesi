@@ -56,6 +56,31 @@ actually matter.
    snowball extra go to the highest APR first. The scripts do this
    automatically.
 
+6. **The payslip is verifiable arithmetic — verify it.** Deduction order:
+   lífeyrir 4% and séreign (pre-tax) → staðgreiðsla → stéttarfélagsgjald
+   (post-tax). The **2% séreign employer match is a 100% instant return**
+   on the matched money — always ask whether it's being captured. The
+   employer's true cost is ~122% of gross (mótframlag, tryggingagjald,
+   sjóðir) — that's the "know your worth" number for negotiation and
+   contractor comparisons (`scripts/payslip.py`).
+
+7. **Kjarasamningar set floors for everyone** (lög 55/1980 — member or
+   not), so wage tables are floors, never benchmarks. Benchmark against
+   Hagstofa's launarannsókn medians/percentiles (`scripts/wages.py`) using
+   the right wage concept: regluleg laun for a plain monthly offer,
+   heildarlaun for total-comp claims.
+
+8. **Pension pillars have wildly different treatment.** Frjáls séreign:
+   TR-clawback-free, heritable, free from 60. Tilgreind séreign: counts
+   against TR (since 2023), forced spread 62–67. Samtrygging: lifelong
+   annuity + invisible disability insurance, but pays your estate nothing.
+   Never say just "séreign" in a recommendation — qualify which.
+
+9. **Kill expensive credit before saving.** Overdraft/credit-card
+   revolving runs ~15.5%, BNPL effectively 17–40%+; savings earn ~7%
+   before tax. And the 300k/yr frítekjumark shelters interest on roughly
+   the first ~4M kr per person — plan account ownership around it.
+
 ## Scripts
 
 All scripts are Python 3 stdlib-only, in `scripts/`. Each has `--help` and
@@ -75,6 +100,7 @@ a byte-identical dual-language (Python/TypeScript) implementation check.
 | `payslip.py gross` | Full launaseðill from gross salary: lífeyrir, séreign, staðgreiðsla, stéttarfélagsgjald → take-home, PLUS the employer side (mótframlag, tryggingagjald → total cost, the "know your worth" number). Verified field-for-field against the payday.is calculator |
 | `payslip.py total-cost` | Inverse: employer total cost → gross → payslip (for contractor-vs-employee and salary-negotiation framing) |
 | `payslip.py verify` | Diff the local math against the live payday.is calculator across a salary list — run after each January bracket update |
+| `wages.py groups/percentiles/occupation` | Live salary benchmarks from Hagstofa's launarannsókn (medians by occupation group, P10–P90 distributions, fine-grained ÍSTARF95 lookup). Data lags ~5 months — uprate by the Jan 1 contractual raise |
 
 Typical session for "should I use savings/pension to pay down my mortgage?":
 
@@ -126,6 +152,27 @@ Load these only when the question requires depth in that area:
 - `references/tax-and-benefits.md` — staðgreiðsla brackets, álagning cycle,
   vaxtabætur status, rental income (incl. Airbnb/heimagisting), capital gains
   on housing, fasteignagjöld, gifts/arv toward down payments, TR skerðingar
+- `references/unions-and-wages.md` — the union system (what membership
+  buys, sjúkrasjóðir, starfsmenntasjóðir), exact payslip mechanics and
+  employer-side costs, employee rights (veikindaréttur, uppsagnarfrestur,
+  yfirvinna, jafnaðarkaup pitfalls, gerviverktaka), salary benchmarking
+  sources, negotiation practicals incl. skattmat hlunnindi values
+- `references/pension-system.md` — the three pillars, age-priced accrual,
+  tilgreind vs frjáls séreign (TR treatment differs!), fund/provider
+  comparison incl. fees, Lífeyrisgáttin, abroad/gaps/divorce/death rules
+- `references/financial-institutions.md` — banks vs indó/Auður, deposit
+  insurance (TVF), savings rates and the frítekjumark real-return math,
+  government bonds, funds and the cheap index options, investing abroad,
+  crypto tax, expensive-credit traps and complaint routes
+- `references/safety-nets-and-life-events.md` — fæðingarorlof math and
+  pitfalls, atvinnuleysisbætur, the illness income ladder, Menntasjóður,
+  barnabætur/meðlag/childcare costs, framfærsluviðmið (what greiðslumat
+  uses), debt trouble (UMS, greiðsluaðlögun, Creditinfo), renting rights
+- `references/tax-law-navigation.md` — **which statute governs what and
+  how to verify any tax number**: the lög 90/2003 article map, the annual
+  fjárlög/bandormur cycle, yskn.is/bindandi álit escalation, the 3-step
+  verification workflow and its traps. Load when citing or verifying tax
+  rules rather than just values
 - `references/icelandic-data.md` — **where to get reliable numbers**: APIs
   and official sources for CPI, forecasts, policy rates, lender rates,
   fasteignamat, tax figures, and legislation, with each source's lag traps.
@@ -141,9 +188,15 @@ Load these only when the question requires depth in that area:
 - **State the behavioral assumption** (passive vs snowball) any paydown
   verdict rests on.
 - **Bracket table staleness**: `tax.py` embeds 2026 values; verify against
-  skatturinn.is each January (the script's `--year` flag fails loudly).
+  skatturinn.is each January (the script's `--year` flag fails loudly), then
+  run `payslip.py verify` as a regression check.
 - **Legal availability ≠ modeling**: séreignarsparnaður cannot normally be
   drawn before retirement age outside the housing-redirect programs. Flag
   hypotheticals as hypothetical.
+- **Official pages lag new laws** — a Skatturinn info page is never proof a
+  scheme doesn't exist (see the verification workflow in
+  `tax-law-navigation.md`).
+- **Point users to their union's kjaramál desk** for payslip disputes and
+  wage claims — it's free and it's what dues pay for.
 - This is decision-support modeling, not financial advice; recommend users
-  verify big moves with their bank or a licensed advisor.
+  verify big moves with their bank, union, or a licensed advisor.
