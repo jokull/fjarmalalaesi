@@ -1,0 +1,19 @@
+{
+  "name": "fjarmalalaesi",
+  "owner": { "name": "Jökull Sólberg" },
+  "metadata": {
+    "description": "Icelandic household finance modeling skills — verðtrygging, húsnæðislán, séreignarsparnaður, staðgreiðsla"
+  },
+  "plugins": [
+    {
+      "name": "icelandic-home-finances",
+      "description": "Model Icelandic home finance decisions: verðtryggð mortgage mechanics, prepayment and snowball strategies, séreignarsparnaður trade-offs, and stacked staðgreiðsla tax math — with validated stdlib-only Python scripts.",
+      "source": "./",
+      "strict": false,
+      "license": "MIT",
+      "category": "finance",
+      "keywords": ["iceland", "verðtrygging", "mortgage", "húsnæðislán", "séreignarsparnaður", "fjármálalæsi"],
+      "skills": ["./skills/icelandic-home-finances"]
+    }
+  ]
+}
